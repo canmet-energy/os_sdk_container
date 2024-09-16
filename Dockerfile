@@ -1,4 +1,4 @@
-ARG UBUNTU_IMAGE=mcr.microsoft.com/vscode/devcontainers/base:0.201.9-ubuntu-20.04
+ARG UBUNTU_IMAGE=mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
 FROM ${UBUNTU_IMAGE}
 
 # Set the version of OpenStudio when building the container. For example `docker build --build-arg
