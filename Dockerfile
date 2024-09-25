@@ -8,7 +8,7 @@ ARG RUBY_VERSION=2.7.2
 ARG OPENSTUDIO_DOWNLOAD_URL=https://github.com/NREL/OpenStudio/releases/download/v3.7.0/OpenStudio-3.7.0+d5269793f1-Ubuntu-20.04-x86_64.deb
 ARG RUBY_DOWNLOAD_URL=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz 
 
-ARG PACKAGES=' gawk build-essential ca-certificates curl gdebi-core git libffi-dev libsqlite3-dev libssl-dev locales python python3-pip software-properties-common sudo zlib1g-dev'
+ARG PACKAGES=' gawk build-essential ca-certificates curl gdebi-core git libffi-dev libsqlite3-dev libssl-dev locales python python3-pip software-properties-common sudo zlib1g-dev libyaml-dev'
 ARG RUBYGEMS='nokogiri:1.13.10 solargraph:0.50.0 debug:1.9.2'  
 ARG PYTHON_PACKAGES='openstudio'
 
