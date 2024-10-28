@@ -5,12 +5,33 @@ FROM ${UBUNTU_IMAGE}
 ARG OPENSTUDIO_VERSION=3.7.0
 ARG OPENSTUDIO_VERSION_EXT=""
 ARG RUBY_VERSION=2.7.2
+ARG PYTHON_VERSION=3.12
 ARG OPENSTUDIO_DOWNLOAD_URL=https://github.com/NREL/OpenStudio/releases/download/v3.7.0/OpenStudio-3.7.0+d5269793f1-Ubuntu-20.04-x86_64.deb
 ARG RUBY_DOWNLOAD_URL=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz 
 
-ARG PACKAGES=' gawk build-essential ca-certificates curl gdebi-core git libffi-dev libsqlite3-dev libssl-dev locales python python3-pip software-properties-common sudo zlib1g-dev libyaml-dev'
-ARG RUBYGEMS='nokogiri:1.13.10 solargraph:0.50.0 debug:1.9.2'  
-ARG PYTHON_PACKAGES='openstudio'
+ARG PACKAGES=' \
+    curl \
+    gdebi-core\ 
+    libsqlite3-dev \
+    libssl-dev \
+    libffi-dev \
+    build-essential \ 
+    zlib1g-dev \
+    vim \
+    git \
+    locales \ 
+    sudo \
+    gawk \
+    ca-certificates \
+    software-properties-common \
+    libyaml-dev \
+'
+ARG RUBYGEMS=' \
+    nokogiri:1.13.10 \
+    solargraph:0.50.0 \
+    debug:1.9.2 \
+'
+
 
 # Set ENV variables
 ENV RUBY_VERSION=${RUBY_VERSION}
@@ -30,7 +51,7 @@ ENV ENERGYPLUS_EXE_PATH=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_
 RUN apt-get update \
     && apt-get install -y ${PACKAGES} \
     && echo "OpenStudio Package Download URL is ${OPENSTUDIO_DOWNLOAD_URL}" \
-    && curl -SLO $OPENSTUDIO_DOWNLOAD_URL \
+    && curl -SLO -k $OPENSTUDIO_DOWNLOAD_URL \
     && OPENSTUDIO_DOWNLOAD_FILENAME=$(ls *.deb) \
     # Verify that the download was successful (not access denied XML from s3)
     && grep -v -q "<Code>AccessDenied</Code>" ${OPENSTUDIO_DOWNLOAD_FILENAME} \
@@ -47,6 +68,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && apt-get clean
 
+# Install Ruby
 RUN curl -SLO -k ${RUBY_DOWNLOAD_URL}\
     && tar -xvzf ruby-${RUBY_VERSION}.tar.gz \
     && cd ruby-${RUBY_VERSION} \
@@ -54,11 +76,24 @@ RUN curl -SLO -k ${RUBY_DOWNLOAD_URL}\
     && make && make install \ 
     && cd .. \
     && rm -fr ruby-${RUBY_VERSION} \
-    && rm ruby-${RUBY_VERSION}.tar.gz
+    && rm ruby-${RUBY_VERSION}.tar.gz \
+    # Install gems required for vscode
+    && gem install -N ${RUBYGEMS} --source http://rubygems.org
 
+
+# Install Python and create a virtual environment. As we move from Ruby to Python
+# for os-standards we will need a consistent way to manage dependencies. This will not impact the 
+# current system pythons required by ubuntu 20.04, and will reside in /venv/bin/python.
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common \
+    && add-apt-repository -y ppa:deadsnakes \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python${PYTHON_VERSION}-venv \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && python${PYTHON_VERSION} -m venv /venv \
+    # Install openstudio python bindings. Stores to /venv/lib/python3.12/site-packages/
+    && /venv/bin/python -m pip install openstudio==${OPENSTUDIO_VERSION}
 
 # May need this for syscalls that do not have ext in path
 RUN ln -s /usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT} /usr/local/openstudio-${OPENSTUDIO_VERSION}
 RUN ln -s /usr/local/openstudio-${OPENSTUDIO_VERSION}/EnergyPlus/energyplus /usr/local/bin/energyplus
-RUN gem install -N ${RUBYGEMS} && \
-    pip install ${PYTHON_PACKAGES}
