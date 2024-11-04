@@ -4,11 +4,11 @@ FROM ${UBUNTU_IMAGE}
 # Set the version of OpenStudio when building the container. For example `docker build --build-arg
 ARG OPENSTUDIO_VERSION=3.8.0
 ARG OPENSTUDIO_VERSION_EXT=""
-ARG RUBY_VERSION=3.2.2
-ARG PYTHON_VERSION=3.12
 ARG OPENSTUDIO_DOWNLOAD_URL=https://openstudio-ci-builds.s3.amazonaws.com/develop/OpenStudio-3.8.0%2Bf953b6fcaf-Ubuntu-20.04-x86_64.deb
+ARG OS_BUNDLER_VERSION=2.4.10
+ARG PYTHON_VERSION=3.12
+ARG RUBY_VERSION=3.2.2
 ARG RUBY_DOWNLOAD_URL=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz 
-
 ARG PACKAGES=' \
     curl \
     gdebi-core\ 
@@ -33,10 +33,11 @@ ARG RUBYGEMS=' \
 '
 
 
+
 # Set ENV variables
 ENV RUBY_VERSION=${RUBY_VERSION}
 ENV RC_RELEASE=FALSE
-ENV OS_BUNDLER_VERSION=2.4.10
+ENV OS_BUNDLER_VERSION=${OS_BUNDLER_VERSION}
 ENV BUNDLE_WITHOUT=native_ext
 ENV RUBYLIB=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}/Ruby
 ENV PYTHONPATH=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}/Python
