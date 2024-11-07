@@ -100,4 +100,12 @@ RUN apt-get update \
 # May need this for syscalls that do not have ext in path
 RUN ln -s /usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT} /usr/local/openstudio-${OPENSTUDIO_VERSION}
 RUN ln -s /usr/local/openstudio-${OPENSTUDIO_VERSION}/EnergyPlus/energyplus /usr/local/bin/energyplus
+# Install locales package
+RUN apt-get update && apt-get install -y locales && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8
+
+# Set environment variables
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
