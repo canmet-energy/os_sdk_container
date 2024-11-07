@@ -67,7 +67,9 @@ RUN apt-get update \
     && apt-get dist-upgrade -y \
     && apt-get update -y \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && apt-get clean
+    && apt-get clean \
+    && locale-gen en_US en_US.UTF-8 \
+    && dpkg-reconfigure locales
 
 # Install Ruby
 RUN curl -SLO -k ${RUBY_DOWNLOAD_URL}\
