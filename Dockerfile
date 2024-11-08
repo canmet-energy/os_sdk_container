@@ -43,6 +43,11 @@ ENV RUBYLIB=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}
 ENV PYTHONPATH=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}/Python
 ENV ENERGYPLUS_EXE_PATH=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}/EnergyPlus/energyplus
 
+# Update Environment
+RUN apt-get update -y\
+&& apt-get upgrade -y \
+&& apt-get dist-upgrade -y\
+&& apt-get update -y
 
 # # Install gdebi, then download and install OpenStudio, then clean up.
 # # gdebi handles the installation of OpenStudio's dependencies
@@ -83,6 +88,14 @@ RUN curl -SLO -k ${RUBY_DOWNLOAD_URL}\
     # Install gems required for vscode
     && gem install -N ${RUBYGEMS} --source http://rubygems.org
 
+#Install unzip
+RUN apt update\
+&& apt-get install unzip -y
+
+#Install AWS tools
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+&& unzip awscliv2.zip \
+&& ./aws/install
 
 # Install Python and create a virtual environment. As we move from Ruby to Python
 # for os-standards we will need a consistent way to manage dependencies. This will not impact the 
