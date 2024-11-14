@@ -27,15 +27,9 @@ ARG PACKAGES=' \
     libyaml-dev \
     unzip \
 '
-ARG RUBYGEMS=' \
-    nokogiri:1.13.10 \
-    solargraph:0.50.0 \
-    debug:1.9.2 \
-'
-
-
 
 # Set ENV variables
+ENV OPENSTUDIO_VERSION=${OPENSTUDIO_VERSION}
 ENV RUBY_VERSION=${RUBY_VERSION}
 ENV RC_RELEASE=FALSE
 ENV OS_BUNDLER_VERSION=${OS_BUNDLER_VERSION}
@@ -80,9 +74,7 @@ RUN curl -SLO -k ${RUBY_DOWNLOAD_URL}\
     && make && make install \ 
     && cd .. \
     && rm -fr ruby-${RUBY_VERSION} \
-    && rm ruby-${RUBY_VERSION}.tar.gz \
-    # Install gems required for vscode
-    && gem install -N ${RUBYGEMS} --source http://rubygems.org
+    && rm ruby-${RUBY_VERSION}.tar.gz
 
 
 #Install AWS tools
