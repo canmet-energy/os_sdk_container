@@ -43,7 +43,6 @@ ENV RUBYLIB=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}
 ENV PYTHONPATH=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}/Python
 ENV ENERGYPLUS_EXE_PATH=/usr/local/openstudio-${OPENSTUDIO_VERSION}${OPENSTUDIO_VERSION_EXT}/EnergyPlus/energyplus
 
-
 # # Install gdebi, then download and install OpenStudio, then clean up.
 # # gdebi handles the installation of OpenStudio's dependencies
 
